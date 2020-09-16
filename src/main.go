@@ -1,4 +1,3 @@
-// go build -o disty.exe ./src && pushd test && ..\disty.exe init && popd
 package main
 
 import (
@@ -6,15 +5,18 @@ import (
 )
 
 func main() {
+	username := flag.String("username", "", "Username for Disty")
+	password := flag.String("password", "", "Password for Disty")
 	flag.Parse()
 
-	command := flag.Arg(0) // serve, push, pull, init
+	command := flag.Arg(0)
 
 	switch command {
 	case "init":
-		{
-			i := Init{}
-			i.New()
-		}
+		Init()
+	case "serve":
+		Serve()
+	case "config":
+		Config(*username, *password)
 	}
 }

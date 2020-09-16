@@ -1,15 +1,15 @@
 package main
 
 import (
+	"encoding/csv"
 	"fmt"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 )
 
-type Init struct{}
-
-func (i *Init) New() {
+func Init() {
 	pwd, err := os.Getwd()
 	if err != nil {
 		return
@@ -21,6 +21,15 @@ func (i *Init) New() {
 		return
 	}
 
+	index, err := os.Create(disty + "/index.csv")
+	defer index.Close()
+	if err != nil {
+		return
+	}
+
+	csvwriter := csv.NewWriter(index)
+	defer csvwriter.Flush()
+
 	// make a copy of all the files
 	filepath.Walk(pwd, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -28,12 +37,15 @@ func (i *Init) New() {
 			return err
 		}
 
+		// ignore the disty directory completely
 		if info.IsDir() && info.Name() == ".disty" {
 			return filepath.SkipDir
 		}
 
 		if !info.IsDir() {
-			fmt.Println(strings.Replace(path, pwd, "", 1))
+			mod_time := strconv.FormatInt(info.ModTime().Unix(), 10) // modification time
+			rel_path := strings.Replace(path, pwd, "", 1)            // path with pre-root removed
+			csvwriter.Write([]string{rel_path, mod_time})
 		}
 
 		return nil
