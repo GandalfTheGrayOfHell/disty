@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/csv"
+	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -9,6 +10,7 @@ import (
 	"strings"
 )
 
+// TODO: add project.json
 func Init() {
 	pwd, err := os.Getwd()
 	if err != nil {
@@ -16,30 +18,40 @@ func Init() {
 	}
 
 	// root dir
-	disty := pwd + "/.disty"
+	disty := pwd + "\\.disty"
 	if os.MkdirAll(disty, 0777) != nil {
 		return
 	}
 
-	index, err := os.Create(disty + "/index.csv")
-	defer index.Close()
+	project_file, err := os.Create(disty + "\\project.json")
+	defer project_file.Close()
 	if err != nil {
 		return
 	}
 
-	csvwriter := csv.NewWriter(index)
+	project := Project{}
+	project.Default()
+
+	project_json, err := json.MarshalIndent(project, "", "\t")
+	if err != nil {
+		return
+	}
+
+	project_file.Write(project_json)
+
+	index_file, err := os.Create(disty + "\\index.csv")
+	defer index_file.Close()
+	if err != nil {
+		return
+	}
+
+	csvwriter := csv.NewWriter(index_file)
 	defer csvwriter.Flush()
 
-	// make a copy of all the files
 	filepath.Walk(pwd, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			fmt.Println("%q: %v", path, err)
 			return err
-		}
-
-		// ignore the disty directory completely
-		if info.IsDir() && info.Name() == ".disty" {
-			return filepath.SkipDir
 		}
 
 		if !info.IsDir() {
@@ -50,4 +62,6 @@ func Init() {
 
 		return nil
 	})
+
+	fmt.Println("[SUCCESS] Initialized successfully")
 }

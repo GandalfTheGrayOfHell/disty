@@ -5,8 +5,10 @@ import (
 )
 
 func main() {
+	// TODO: take username and password from stdin
 	username := flag.String("username", "", "Username for Disty")
 	password := flag.String("password", "", "Password for Disty")
+	remote := flag.String("url", "", "URL for Remote server")
 	flag.Parse()
 
 	command := flag.Arg(0)
@@ -18,5 +20,7 @@ func main() {
 		Serve()
 	case "config":
 		Config(*username, *password)
+	case "remote":
+		Remote(*remote)
 	}
 }

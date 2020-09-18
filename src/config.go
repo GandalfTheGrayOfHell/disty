@@ -1,16 +1,38 @@
 package main
 
 import (
+	"crypto/md5"
+	"encoding/hex"
 	"fmt"
-	"log"
 	"os"
 )
 
+// Module should just allow addition of username and password of an individual user
+
 func Config(username, password string) {
 	if username == "" || password == "" {
-		fmt.Println(username, password)
-		log.Fatalf("[Error] Username and password is required")
+		panic("[ERROR] Username and password is required")
 	}
 
-	fmt.Println(os.TempDir())
+	if os.MkdirAll(os.TempDir()+"\\disty", 0777) != nil {
+		panic("[ERROR] Could not create dir: " + os.TempDir() + "\\disty")
+	}
+
+	f, err := os.Create(os.TempDir() + "\\disty\\auth")
+	defer f.Close()
+	if err != nil {
+		panic("[ERROR] Could not create file: " + os.TempDir() + "\\disty\\auth")
+	}
+
+	md5_user := md5.Sum([]byte(username))
+	md5_pass := md5.Sum([]byte(password))
+
+	hex_user := hex.EncodeToString(md5_user[:])
+	hex_pass := hex.EncodeToString(md5_pass[:])
+
+	f.Write([]byte(hex_user))
+	f.Write([]byte("\n"))
+	f.Write([]byte(hex_pass))
+
+	fmt.Println("[SUCCESS] Configuration saved at", os.TempDir()+"\\disty")
 }
