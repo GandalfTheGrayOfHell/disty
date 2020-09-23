@@ -5,7 +5,10 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 )
+
+// TODO: remote verififcation
 
 func Remote(remote string) {
 	if remote == "" {
@@ -19,7 +22,7 @@ func Remote(remote string) {
 
 	// TODO: check if project exists
 
-	project_file, err := ioutil.ReadFile(pwd + "\\.disty\\project.json")
+	project_file, err := ioutil.ReadFile(filepath.Join(pwd, ".disty", "project.json"))
 	if err != nil {
 		panic("[ERROR] Could not read project.json")
 	}
@@ -35,7 +38,7 @@ func Remote(remote string) {
 		panic("[ERROR] Could not marshal project")
 	}
 
-	if ioutil.WriteFile(pwd+"\\.disty\\project.json", project_json, 0777) != nil {
+	if ioutil.WriteFile(filepath.Join(pwd, ".disty", "project.json"), project_json, 0777) != nil {
 		panic("[ERROR] Could not write project.json")
 	}
 

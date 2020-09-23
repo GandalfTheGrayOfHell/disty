@@ -10,23 +10,22 @@ import (
 	"strings"
 )
 
-// TODO: add project.json
 func Init() {
 	pwd, err := os.Getwd()
 	if err != nil {
-		return
+		panic("[ERROR] Could not get working directory")
 	}
 
 	// root dir
 	disty := pwd + "\\.disty"
 	if os.MkdirAll(disty, 0777) != nil {
-		return
+		panic("[ERROR] Could not create dir: " + pwd + "\\.disty")
 	}
 
-	project_file, err := os.Create(disty + "\\project.json")
+	project_file, err := os.Create(filepath.Join(disty + "project.json"))
 	defer project_file.Close()
 	if err != nil {
-		return
+		panic("[ERROR] Could not create file: " + disty + "\\project.json")
 	}
 
 	project := Project{}
@@ -34,15 +33,15 @@ func Init() {
 
 	project_json, err := json.MarshalIndent(project, "", "\t")
 	if err != nil {
-		return
+		panic("[ERROR] Could not JSON Marshal")
 	}
 
 	project_file.Write(project_json)
 
-	index_file, err := os.Create(disty + "\\index.csv")
+	index_file, err := os.Create(filepath.Join(disty, "index.csv"))
 	defer index_file.Close()
 	if err != nil {
-		return
+		panic("[ERROR] Could not create file: " + disty + "\\index.csv")
 	}
 
 	csvwriter := csv.NewWriter(index_file)

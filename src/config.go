@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"os"
+	"path"
 )
 
 // Module should just allow addition of username and password of an individual user
@@ -14,11 +15,11 @@ func Config(username, password string) {
 		panic("[ERROR] Username and password is required")
 	}
 
-	if os.MkdirAll(os.TempDir()+"\\disty", 0777) != nil {
+	if os.MkdirAll(path.Join(os.TempDir(), "disty"), 0777) != nil {
 		panic("[ERROR] Could not create dir: " + os.TempDir() + "\\disty")
 	}
 
-	f, err := os.Create(os.TempDir() + "\\disty\\auth")
+	f, err := os.Create(path.Join(os.TempDir(), "disty", "auth"))
 	defer f.Close()
 	if err != nil {
 		panic("[ERROR] Could not create file: " + os.TempDir() + "\\disty\\auth")
