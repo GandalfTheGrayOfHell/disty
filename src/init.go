@@ -17,12 +17,12 @@ func Init() {
 	}
 
 	// root dir
-	disty := pwd + "\\.disty"
+	disty := filepath.Join(pwd, ".disty")
 	if os.MkdirAll(disty, 0777) != nil {
 		panic("[ERROR] Could not create dir: " + pwd + "\\.disty")
 	}
 
-	project_file, err := os.Create(filepath.Join(disty + "project.json"))
+	project_file, err := os.Create(filepath.Join(disty, "project.json"))
 	defer project_file.Close()
 	if err != nil {
 		panic("[ERROR] Could not create file: " + disty + "\\project.json")

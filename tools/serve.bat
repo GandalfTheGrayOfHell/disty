@@ -2,4 +2,4 @@
 
 go build -o disty.exe ./src
 echo Running
-disty.exe -port=3000 -dir=./tmp serve
+disty.exe serve -port=3000 -dir=./tmp

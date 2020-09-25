@@ -32,7 +32,7 @@ func req_to_file(r *http.Request, file string, perm os.FileMode) error {
 }
 
 // gets the mod time of a file in the index
-func get_file_modtime(index string, filename string) (string, error) {
+func get_index_file_modtime(index string, filename string) (string, error) {
 	reader, err := ioutil.ReadFile(index)
 	if err != nil {
 		return "", err

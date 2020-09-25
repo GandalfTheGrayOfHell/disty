@@ -43,10 +43,10 @@ func push(w http.ResponseWriter, r *http.Request, dir string) {
 		w.WriteHeader(400)
 	}
 
-	// check for file exists
+	// check if file exists
 	file_info, err1 := os.Stat(filepath.Join(dir, project[0], filename))
 
-	if os.IsNotExist(err1) || file_info.IsDir() { // file does not exists or is a directory
+	if os.IsNotExist(err1) || file_info.IsDir() { // file does not exist or is a directory
 		if track[0] == "TRACKED" { // file is tracked but does not exist on the disk
 			w.WriteHeader(500)
 			return
@@ -63,7 +63,7 @@ func push(w http.ResponseWriter, r *http.Request, dir string) {
 			}
 		}
 	} else if !os.IsNotExist(err1) && !file_info.IsDir() { // file exists and not a directory
-		rmod, err := get_file_modtime(filepath.Join(dir, project[0], ".disty", "index.csv"), filename) // remote mod time
+		rmod, err := get_index_file_modtime(filepath.Join(dir, project[0], ".disty", "index.csv"), filename) // remote mod time
 		if err != nil {
 			w.WriteHeader(500)
 			return
