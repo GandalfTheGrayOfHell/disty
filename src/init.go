@@ -49,14 +49,18 @@ func Init() {
 
 	filepath.Walk(pwd, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
-			fmt.Println("%q: %v", path, err)
-			return err
+			panic("[ERROR] `Walk` error for file: " + path)
+		}
+
+		// ignoring all git files because git handles it better than disty
+		if info.IsDir() && info.Name() == ".git" {
+			return filepath.SkipDir
 		}
 
 		if !info.IsDir() {
 			mod_time := strconv.FormatInt(info.ModTime().Unix(), 10) // modification time
 			rel_path := strings.Replace(path, pwd, "", 1)            // path with pre-root removed
-			csvwriter.Write([]string{rel_path, mod_time})
+			csvwriter.Write([]string{rel_path, mod_time, "0"})
 		}
 
 		return nil

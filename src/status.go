@@ -45,7 +45,7 @@ func Status() {
 			panic("[ERROR] `Walk` error for file: " + rel_path)
 		}
 
-		if info.IsDir() && info.Name() == ".disty" {
+		if info.IsDir() && (info.Name() == ".git" || info.Name() == ".disty") {
 			return filepath.SkipDir
 		}
 
@@ -77,7 +77,7 @@ func Status() {
 	})
 
 	if len(modified) == 0 && len(untracked) == 0 {
-		fmt.Println("[INFO] No changes")
+		fmt.Println("No changes")
 	} else {
 		fmt.Println("Modified files:")
 

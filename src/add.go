@@ -8,7 +8,6 @@ import (
 )
 
 // `add` updates the Mod time in the index
-
 func add(pwd string, filename string) {
 	// check if file exists otherwise panic
 	file_info, err := os.Stat(filepath.Join(pwd, filename))
@@ -29,16 +28,16 @@ func add(pwd string, filename string) {
 	}
 
 	if file_mod > index_mod {
-		err := update_index_file_mod(filepath.Join(pwd, ".disty", "index.csv"), filename, strconv.Itoa(file_mod))
+		err := update_index_file_mod(filepath.Join(pwd, ".disty", "index.csv"), filename, strconv.Itoa(file_mod), "1")
 		if err != nil {
-			panic("[ERROR] Could not update mod time for file: " + filepath.Join(pwd, ".disty", "index.csv"))
+			panic("[ERROR] Could not update mod time for file: " + filepath.Join(pwd, filename))
 		}
 	}
 }
 
 func Add(filenames []string) {
 	if len(filenames) < 1 {
-		panic("[ERROR] Pass a file to track")
+		panic("[ERROR] No file to add")
 	}
 
 	pwd, err := os.Getwd()
@@ -50,7 +49,11 @@ func Add(filenames []string) {
 		// run normal routine
 		filepath.Walk(pwd, func(path string, info os.FileInfo, err error) error {
 			if err != nil {
-				panic("[ERROR] `Walk` error for file: " + pwd)
+				panic("[ERROR] `Walk` error for file: " + path)
+			}
+
+			if info.IsDir() && info.Name() == ".git" {
+				return filepath.SkipDir
 			}
 
 			if !info.IsDir() {

@@ -36,6 +36,7 @@ func main() {
 	case "config":
 		Config(*configUser, *configPass)
 	case "remote":
+		remoteCmd.Parse(os.Args[2:])
 		Remote(*remoteServer)
 	case "push":
 		Push()
