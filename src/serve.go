@@ -190,7 +190,7 @@ func serveFile(w http.ResponseWriter, r *http.Request, dir string) {
 		return
 	}
 
-	file, err := query["file"]
+	file, err := query["filename"]
 	if !err || len(file[0]) < 1 {
 		w.WriteHeader(400)
 		return
@@ -213,12 +213,6 @@ func serveFile(w http.ResponseWriter, r *http.Request, dir string) {
 }
 
 func serveClone(w http.ResponseWriter, r *http.Request, dir string) {
-	pwd, err := os.Getwd()
-	if err != nil {
-		w.WriteHeader(500)
-		return
-	}
-
 	query := r.URL.Query()
 
 	project, err1 := query["project"]
@@ -229,7 +223,7 @@ func serveClone(w http.ResponseWriter, r *http.Request, dir string) {
 
 	var files []string
 
-	err = filepath.Walk(filepath.Join(dir, project[0]), func(path string, info os.FileInfo, err error) error {
+	err := filepath.Walk(filepath.Join(dir, project[0]), func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
@@ -239,7 +233,7 @@ func serveClone(w http.ResponseWriter, r *http.Request, dir string) {
 		}
 
 		if !info.IsDir() {
-			files = append(files, strings.Replace(path, filepath.Join(pwd, dir), "", 1))
+			files = append(files, strings.Replace(path, filepath.Join(dir, project[0]), "", 1))
 		}
 
 		return nil
@@ -275,6 +269,6 @@ func Serve(port int, dir string) {
 	})
 
 	if http.ListenAndServe(":"+strconv.Itoa(port), nil) != nil {
-		panic("[ERROR] Could not start server on port " + string(port))
+		panic("[ERROR] Could not start server on port " + strconv.Itoa(port))
 	}
 }

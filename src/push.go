@@ -6,9 +6,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
+	"time"
 )
 
 func Push() {
@@ -24,8 +27,6 @@ func Push() {
 
 	projectIndex := strings.LastIndex(pwd, "\\")
 	projectName := pwd[projectIndex+1:]
-
-	fmt.Println(pwd, projectName)
 
 	reader, err := ioutil.ReadFile(filepath.Join(pwd, ".disty", "index.csv"))
 	if err != nil {
@@ -53,23 +54,36 @@ func Push() {
 		panic("There is no remote server\nUse `disty remote` to add a server")
 	}
 
-	chs := make(chan string, len(records))
+	var wg sync.WaitGroup
+
+	client := http.Client{Timeout: time.Duration(5 * time.Second)}
 
 	for _, record := range records {
 		if record[2] == "1" {
-			url := fmt.Sprintf("http://%s/push?project=%s&filename=%s&modtime=%s", project.Remote, projectName, record[0], record[1])
-
 			body, err := ioutil.ReadFile(filepath.Join(pwd, record[0]))
 			if err != nil {
 				panic("[ERROR] Could not read file: " + filepath.Join(pwd, record[0]))
 			}
 
-			go make_request(url, "GET", body, chs)
+			url := fmt.Sprintf("http://%s/push?project=%s&filename=%s&modtime=%s", project.Remote, projectName, record[0], record[1])
+
+			wg.Add(1)
+			go func(url string, method string, body []byte) {
+				req, _ := http.NewRequest(method, url, bytes.NewReader(body))
+				defer wg.Done()
+
+				resp, err := client.Do(req)
+				defer resp.Body.Close()
+				if err != nil {
+					panic("[ERROR] Could not make " + method + " request to " + url)
+				}
+			}(url, "GET", body)
 		}
 	}
 
-	fmt.Println(<-chs)
-	fmt.Println(<-chs)
-	fmt.Println(<-chs)
-	fmt.Println(<-chs)
+	wg.Wait()
+
+	if err := reset_index_updates(filepath.Join(pwd, ".disty", "index.csv")); err != nil {
+		panic("[ERROR] Could not reset updates in index")
+	}
 }

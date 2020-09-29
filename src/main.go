@@ -8,11 +8,15 @@ import (
 func main() {
 	// TODO: take username and password from stdin
 	// initCmd := flag.NewFlagSet("init", flag.ExitOnError)
-	// cloneCmd := flag.NewFlagSet("clone", flag.ExitOnError)
 	// pushCmd := flag.NewFlagSet("push", flag.ExitOnError)
 	// pullCmd := flag.NewFlagSet("pull", flag.ExitOnError)
 	// statusCmd := flag.NewFlagSet("status", flag.ExitOnError)
 	// addCmd := flag.NewFlagSet("add", flag.ExitOnError)
+
+	cloneCmd := flag.NewFlagSet("clone", flag.ExitOnError)
+	cloneUrl := cloneCmd.String("url", "", "URL for Remote server")
+	cloneDir := cloneCmd.String("dir", "./", "Directory path to clone repo")
+	cloneProject := cloneCmd.String("project", "", "Project name")
 
 	configCmd := flag.NewFlagSet("config", flag.ExitOnError)
 	configUser := configCmd.String("username", "", "Username for Disty")
@@ -24,8 +28,6 @@ func main() {
 	serveCmd := flag.NewFlagSet("serve", flag.ExitOnError)
 	servePort := serveCmd.Int("port", 3000, "Port to start Disty server")
 	serveDir := serveCmd.String("dir", "./", "Directory path for server to store projects on")
-
-	flag.Parse()
 
 	switch os.Args[1] {
 	case "init":
@@ -41,7 +43,8 @@ func main() {
 	case "push":
 		Push()
 	case "clone":
-		Clone()
+		cloneCmd.Parse(os.Args[2:])
+		Clone(*cloneUrl, *cloneDir, *cloneProject)
 	case "status":
 		Status()
 	case "add":

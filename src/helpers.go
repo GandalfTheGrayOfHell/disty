@@ -9,7 +9,6 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
-	"time"
 )
 
 type Project struct {
@@ -81,6 +80,39 @@ func update_index_file_mod(index string, filename string, modtime string, update
 			records[i][2] = update
 			break
 		}
+	}
+
+	f, err := os.OpenFile(index, os.O_SYNC|os.O_WRONLY, 0777)
+	defer f.Close()
+	if err != nil {
+		return err
+	}
+
+	w := csv.NewWriter(f)
+	w.WriteAll(records)
+
+	if err := w.Error(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func reset_index_updates(index string) error {
+	reader, err := ioutil.ReadFile(index)
+	if err != nil {
+		return err
+	}
+
+	r := csv.NewReader(bytes.NewReader(reader))
+
+	records, err := r.ReadAll()
+	if err != nil {
+		return err
+	}
+
+	for i := range records {
+		records[i][2] = "0"
 	}
 
 	f, err := os.OpenFile(index, os.O_SYNC|os.O_WRONLY, 0777)
@@ -196,22 +228,4 @@ func check_project_modified(project string) bool {
 	} else {
 		return true
 	}
-}
-
-func make_request(url string, method string, body []byte, ch chan<- string) {
-	client := http.Client{Timeout: time.Duration(5 * time.Second)}
-	req, _ := http.NewRequest(method, url, bytes.NewReader(body))
-
-	resp, err := client.Do(req)
-	defer resp.Body.Close()
-	if err != nil {
-		panic("[ERROR] Could not make " + method + " request to " + url)
-	}
-
-	respbody, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		panic("[ERROR] Error while reading Response body")
-	}
-
-	ch <- string(respbody)
 }
