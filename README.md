@@ -30,7 +30,7 @@ $ disty add main.c Makefile ./src/math_def.h
 $ disty push
 ```
 
-To watch the current status of your project:
+To see the current status of your project:
 ```shell
 $ disty status
 ```
@@ -71,7 +71,7 @@ $ disty status
 
 ## FAQ
 ### Should I replace Git with Disty?
-No. Never. Infact, Disty works very well alongside Git. One can use it to `push` files that would traditionally be in `.gitignore` and hence untracked. The idea behind disty is to store the project **as is** for an individual. One can also use Disty to make projects portable or push binaries and libraries (*.so/*.dll/*.lib). Here is an image to show exactly where Disty lies:
+No. Never. Infact, Disty works very well alongside Git. One can use it to `push` files that would traditionally be in `.gitignore` and hence untracked. The idea behind disty is to store the project **as is** for an individual. One can also use Disty to make projects portable or push binaries and libraries (*.so/*.dll/*.lib). Here is an image to show exactly where Disty lies: <br/>
 ![Disty](disty.jpg)
 
 ## Roadmap
