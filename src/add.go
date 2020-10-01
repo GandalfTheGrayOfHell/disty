@@ -27,7 +27,12 @@ func add(pwd string, filename string) {
 		panic("[ERROR] Could not parse Mod time")
 	}
 
-	if file_mod > index_mod {
+	if index_mod == -1 {
+		err := add_index_file_mod(filepath.Join(pwd, ".disty", "index.csv"), filename, strconv.Itoa(file_mod))
+		if err != nil {
+			panic(err)
+		}
+	} else if file_mod > index_mod {
 		err := update_index_file_mod(filepath.Join(pwd, ".disty", "index.csv"), filename, strconv.Itoa(file_mod), "1")
 		if err != nil {
 			panic("[ERROR] Could not update mod time for file: " + filepath.Join(pwd, filename))

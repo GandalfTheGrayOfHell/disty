@@ -13,10 +13,7 @@ import (
 
 type Project struct {
 	Remote string `json:"remote"`
-}
-
-func (p *Project) Default() {
-	p.Remote = ""
+	Name   string `json:"name"`
 }
 
 // Writes a Request Body to a file
@@ -145,7 +142,7 @@ func add_index_file_mod(index string, filename string, modtime string) error {
 		return err
 	}
 
-	records = append(records, []string{filename, modtime})
+	records = append(records, []string{filename, modtime, "1"})
 
 	f, err := os.OpenFile(index, os.O_SYNC|os.O_WRONLY, 0777)
 	defer f.Close()

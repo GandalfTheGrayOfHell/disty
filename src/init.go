@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-func Init() {
+func Init(projectname string) {
 	pwd, err := os.Getwd()
 	if err != nil {
 		panic("[ERROR] Could not get working directory")
@@ -28,8 +28,7 @@ func Init() {
 		panic("[ERROR] Could not create file: " + disty + "\\project.json")
 	}
 
-	project := Project{}
-	project.Default()
+	project := Project{Name: projectname, Remote: ""}
 
 	project_json, err := json.MarshalIndent(project, "", "\t")
 	if err != nil {

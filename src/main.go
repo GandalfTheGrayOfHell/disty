@@ -7,11 +7,13 @@ import (
 
 func main() {
 	// TODO: take username and password from stdin
-	// initCmd := flag.NewFlagSet("init", flag.ExitOnError)
 	// pushCmd := flag.NewFlagSet("push", flag.ExitOnError)
 	// pullCmd := flag.NewFlagSet("pull", flag.ExitOnError)
 	// statusCmd := flag.NewFlagSet("status", flag.ExitOnError)
 	// addCmd := flag.NewFlagSet("add", flag.ExitOnError)
+
+	initCmd := flag.NewFlagSet("init", flag.ExitOnError)
+	initName := initCmd.String("name", "default", "The name of the project")
 
 	cloneCmd := flag.NewFlagSet("clone", flag.ExitOnError)
 	cloneUrl := cloneCmd.String("url", "", "URL for Remote server")
@@ -27,11 +29,12 @@ func main() {
 
 	serveCmd := flag.NewFlagSet("serve", flag.ExitOnError)
 	servePort := serveCmd.Int("port", 3000, "Port to start Disty server")
-	serveDir := serveCmd.String("dir", "./", "Directory path for server to store projects on")
+	serveDir := serveCmd.String("dir", "./", "Directory path for server to store projects in")
 
 	switch os.Args[1] {
 	case "init":
-		Init()
+		initCmd.Parse(os.Args[2:])
+		Init(*initName)
 	case "serve":
 		serveCmd.Parse(os.Args[2:])
 		Serve(*servePort, *serveDir)
@@ -42,6 +45,8 @@ func main() {
 		Remote(*remoteServer)
 	case "push":
 		Push()
+	case "pull":
+		Pull()
 	case "clone":
 		cloneCmd.Parse(os.Args[2:])
 		Clone(*cloneUrl, *cloneDir, *cloneProject)

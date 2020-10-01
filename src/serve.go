@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"encoding/csv"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -14,7 +13,6 @@ import (
 
 func servePush(w http.ResponseWriter, r *http.Request, dir string) {
 	query := r.URL.Query()
-	fmt.Println(query)
 
 	project, err := query["project"]
 	if !err || len(project[0]) < 1 {
@@ -135,7 +133,7 @@ func servePull(w http.ResponseWriter, r *http.Request, dir string) {
 	}
 
 	// read local index file for a project
-	index, err1 := ioutil.ReadFile(filepath.Join(dir, project[0], "index.csv"))
+	index, err1 := ioutil.ReadFile(filepath.Join(dir, project[0], ".disty", "index.csv"))
 	if err1 != nil {
 		w.WriteHeader(500)
 		return
@@ -171,12 +169,10 @@ func servePull(w http.ResponseWriter, r *http.Request, dir string) {
 				updation = append(updation, record[0])
 			}
 		} else {
-			w.WriteHeader(404)
-			return
+			// file is new and client does not have it
+			updation = append(updation, record[0])
 		}
 	}
-
-	// send updation file
 
 	w.Write([]byte(strings.Join(updation[:], "|")))
 }

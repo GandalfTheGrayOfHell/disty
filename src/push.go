@@ -68,6 +68,7 @@ func Push() {
 			url := fmt.Sprintf("http://%s/push?project=%s&filename=%s&modtime=%s", project.Remote, projectName, record[0], record[1])
 
 			wg.Add(1)
+
 			go func(url string, method string, body []byte) {
 				req, _ := http.NewRequest(method, url, bytes.NewReader(body))
 				defer wg.Done()

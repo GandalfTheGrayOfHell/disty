@@ -55,7 +55,7 @@ func Clone(url, dirpath, project string) {
 			filenameIndex := strings.LastIndex(file, "\\")
 
 			if _, err := os.Stat(filepath.Join(pwd, dirpath, file[:filenameIndex])); os.IsNotExist(err) {
-				err := os.MkdirAll(filepath.Join(pwd, dirpath, file[:filenameIndex]), 0700)
+				err := os.MkdirAll(filepath.Join(pwd, dirpath, file[:filenameIndex]), 0777)
 				if err != nil {
 					panic(err)
 				}
@@ -75,5 +75,5 @@ func Clone(url, dirpath, project string) {
 	}
 	wg.Wait()
 
-	fmt.Println("Successfully cloned")
+	fmt.Println("[SUCCESS] Successfully cloned")
 }
