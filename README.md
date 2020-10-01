@@ -1,5 +1,6 @@
 # Disty
 [![forthebadge](https://forthebadge.com/images/badges/made-with-go.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/0-percent-optimized.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/not-a-bug-a-feature.svg)](https://forthebadge.com)
+<br/>
 Disty is a git-like project tracking system designed for individuals to store their projects **as is** on personal cloud spaces.
 
 ## Usage
